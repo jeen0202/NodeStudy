@@ -1,3 +1,4 @@
+//http 모듈을 사용하여 server 
 const http = require('http');
 
 http.createServer((request, response) => {
@@ -5,4 +6,4 @@ http.createServer((request, response) => {
     response.end('Hello world!\n');
 }).listen(8124);
 
-console.log('Server running at https://127.0.0.1:8124/');
+console.log('Server running at http://127.0.0.1:8124/');
