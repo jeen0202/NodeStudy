@@ -2,32 +2,35 @@ var http = require('http');
 var fs = require('fs');
 var url = require('url');
 
-function templateHTML(title, list,body, control){
-  return `
-  <!doctype html>
-  <html>
-  <head>
-    <title>WEB1 - ${title}</title>
-    <meta charset="utf-8">
-  </head>
-  <body>
-    <h1><a href="/">WEB</a></h1>
-    ${list}
-    ${control} 
-    ${body}
-  </body>
-  </html>
-  `;
-}
-function templateList(filelist){
-  var list = '<ul>';
-        var i = 0;
-        while (i<filelist.length){
-        list += `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
-        i+=1;
-       }
-        list = list +'</ul>';
-        return list;
+//refactoring : 동작방식은 유지하면서 내부의 코드를 효율적으로 바꾸는 행위
+var template ={
+  HTML:function(title, list,body, control){
+    return `
+    <!doctype html>
+    <html>
+    <head>
+      <title>WEB1 - ${title}</title>
+      <meta charset="utf-8">
+    </head>
+    <body>
+      <h1><a href="/">WEB</a></h1>
+      ${list}
+      ${control} 
+      ${body}
+    </body>
+    </html>
+    `;
+  }
+  ,list:function(filelist){
+    var list = '<ul>';
+          var i = 0;
+          while (i<filelist.length){
+          list += `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
+          i+=1;
+         }
+          list = list +'</ul>';
+          return list;
+  }
 }
 var app = http.createServer(function(request,response){
     var _url = request.url;
@@ -38,24 +41,24 @@ var app = http.createServer(function(request,response){
     if(pathname === '/'){
       //id값이 없는 최초의 페이지에 대한 부분 추가
       if(queryData.id === undefined){
-
         fs.readdir('./data', function(error,filelist){          
-          var title = 'Welcome';
+        var title = 'Welcome';
         var descrpition = "Hello, Node.js";
-        var list = templateList(filelist);
-        var template = templateHTML(title,list
+
+        var list = template.list(filelist);
+        var html = template.HTML(title,list
           ,`<h2>${title}</h2>${descrpition}`
           ,`<a href="/create">create</a>`
           );
         response.writeHead(200);
-        response.end(template); 
+        response.end(html); 
         })        
       }else{
         fs.readdir('./data', function(error,filelist){         
          fs.readFile(`./data/${queryData.id}`,'utf8',function(err,descrpition){
           var title = queryData.id;
-          var list = templateList(filelist);
-          var template = templateHTML(title,list
+          var list = template.list(filelist);
+          var html = template.HTML(title,list
             ,`<h2>${title}</h2>${descrpition}`
             ,`<a href="/create">create</a>
             <a href="/update?id=${title}">update</a>
@@ -67,15 +70,15 @@ var app = http.createServer(function(request,response){
             //submit으로 구현된 delete 버튼의 경우 css를 통해 재구성 하자.
             );
         response.writeHead(200);
-        response.end(template); 
+        response.end(html); 
         });  
       });  
     }       
   }else if(pathname ==="/create"){
     fs.readdir('./data', function(error,filelist){          
       var title = 'WEB - create';    
-    var list = templateList(filelist);
-    var template = templateHTML(title,list,`
+    var list = template.list(filelist);
+    var html = template.HTML(title,list,`
       <form action="/create_process" method="post">
         <p><input type ="text" name="title" placeholder ="title"></p>
         <p>
@@ -87,7 +90,7 @@ var app = http.createServer(function(request,response){
       </form>
     `,'');
     response.writeHead(200);
-    response.end(template); 
+    response.end(html); 
     });   
   }else if (pathname==="/create_process"){
     var body = "";
@@ -111,8 +114,8 @@ var app = http.createServer(function(request,response){
     fs.readdir('./data', function(error,filelist){         
       fs.readFile(`./data/${queryData.id}`,'utf8',function(err,descrpition){
        var title = queryData.id;
-       var list = templateList(filelist);
-       var template = templateHTML(title,list
+       var list = template.list(filelist);
+       var html = template.HTML(title,list
          ,`<form action="/update_process" method="post">
           <input type = "hidden" name="id" value="${title}">
          <p><input type ="text" name="title" placeholder ="title" value="${title}"></p>
@@ -127,7 +130,7 @@ var app = http.createServer(function(request,response){
          ,`<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
          );
      response.writeHead(200);
-     response.end(template); 
+     response.end(html); 
      });  
    });
   }else if(pathname === "/update_process"){
