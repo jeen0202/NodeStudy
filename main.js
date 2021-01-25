@@ -57,7 +57,14 @@ var app = http.createServer(function(request,response){
           var list = templateList(filelist);
           var template = templateHTML(title,list
             ,`<h2>${title}</h2>${descrpition}`
-            ,`<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
+            ,`<a href="/create">create</a>
+            <a href="/update?id=${title}">update</a>
+            <form action = "/delete_process" method = "post">
+              <input type = "hidden" name="id" value ="${title}">
+              <input type = "submit" value = "delete">
+            </form>`
+            //delete 기능을 링크를 통해 구현할 경우 문제가 발생할 수 있다.
+            //submit으로 구현된 delete 버튼의 경우 css를 통해 재구성 하자.
             );
         response.writeHead(200);
         response.end(template); 
@@ -144,6 +151,19 @@ var app = http.createServer(function(request,response){
         })       
       })
     });  
+  }else if(pathname === "/delete_process"){
+    var body = "";
+    request.on('data',function(data){
+        body += data;
+    });
+    request.on("end",function(){
+      var post = qs.parse(body);
+      var id = post.id;     
+      fs.unlink(`data/${id}`, function(error){
+        response.writeHead(302, {Location: `/`});
+        response.end(); 
+      })
+    }); 
   }else{
     response.writeHead(404);
     response.end('Not found');    
