@@ -3,6 +3,7 @@ var fs = require('fs');
 var url = require('url');
 var template = require('./lib/template.js');
 var file = require('./lib/file.js')
+var path = require('path');
 //refactoring : 동작방식은 유지하면서 내부의 코드를 효율적으로 바꾸는 행위
 
 var app = http.createServer(function(request,response){
@@ -27,8 +28,9 @@ var app = http.createServer(function(request,response){
         response.end(html); 
         })        
       }else{
-        fs.readdir('./data', function(error,filelist){         
-         fs.readFile(`./data/${queryData.id}`,'utf8',function(err,descrpition){
+        fs.readdir('./data', function(error,filelist){   
+          var filterdId = path.parse(queryData.id).base;      
+         fs.readFile(`./data/${filterdId}`,'utf8',function(err,descrpition){
           var title = queryData.id;
           var list = template.list(filelist);
           var html = template.HTML(title,list
@@ -85,7 +87,7 @@ var app = http.createServer(function(request,response){
     });   
   }else if(pathname === "/update"){
     fs.readdir('./data', function(error,filelist){         
-      fs.readFile(`./data/${queryData.id}`,'utf8',function(err,descrpition){
+      fs.readFile(`./data/${filterdId}`,'utf8',function(err,descrpition){
        var title = queryData.id;
        var list = template.list(filelist);
        var html = template.HTML(title,list
@@ -134,8 +136,9 @@ var app = http.createServer(function(request,response){
     });
     request.on("end",function(){
       var post = qs.parse(body);
-      var id = post.id;     
-      fs.unlink(`data/${id}`, function(error){
+      var id = post.id;
+      var filterdId = path.parse(id).base;     
+      fs.unlink(`data/${filterdId}`, function(error){
         response.writeHead(302, {Location: `/`});
         response.end(); 
       })
