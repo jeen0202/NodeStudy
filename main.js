@@ -2,7 +2,7 @@ var http = require('http');
 var fs = require('fs');
 var url = require('url');
 
-function templateHTML(title, list,body){
+function templateHTML(title, list,body, control){
   return `
   <!doctype html>
   <html>
@@ -13,7 +13,7 @@ function templateHTML(title, list,body){
   <body>
     <h1><a href="/">WEB</a></h1>
     ${list}
-    <a href="/create">create</a>
+    ${control} 
     ${body}
   </body>
   </html>
@@ -43,7 +43,10 @@ var app = http.createServer(function(request,response){
           var title = 'Welcome';
         var descrpition = "Hello, Node.js";
         var list = templateList(filelist);
-        var template = templateHTML(title,list,`<h2>${title}</h2>${descrpition}`);
+        var template = templateHTML(title,list
+          ,`<h2>${title}</h2>${descrpition}`
+          ,`<a href="/create">create</a>`
+          );
         response.writeHead(200);
         response.end(template); 
         })        
@@ -52,9 +55,12 @@ var app = http.createServer(function(request,response){
          fs.readFile(`./data/${queryData.id}`,'utf8',function(err,descrpition){
           var title = queryData.id;
           var list = templateList(filelist);
-          var template = templateHTML(title,list,`<h2>${title}</h2>${descrpition}`);
-      response.writeHead(200);
-     response.end(template); 
+          var template = templateHTML(title,list
+            ,`<h2>${title}</h2>${descrpition}`
+            ,`<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
+            );
+        response.writeHead(200);
+        response.end(template); 
         });  
       });  
     }       
@@ -63,16 +69,16 @@ var app = http.createServer(function(request,response){
       var title = 'WEB - create';    
     var list = templateList(filelist);
     var template = templateHTML(title,list,`
-      <form action="http://localhost:3000/create_process" method="post">
+      <form action="/create_process" method="post">
         <p><input type ="text" name="title" placeholder ="title"></p>
         <p>
-          <textarea name="description" placeholder="descrption"></textarea>
+          <textarea name="description" placeholder="description"></textarea>
        </p>
         <p>
           <input type="submit">    
         </p>
       </form>
-    `);
+    `,'');
     response.writeHead(200);
     response.end(template); 
     });   
@@ -88,12 +94,56 @@ var app = http.createServer(function(request,response){
       var post = qs.parse(body);
       var title = post.title;
       var descrpition = post.description;
-      fs.writeFile(`data/${title}`,descrpition,'utf8',
+      fs.writeFile(`data/${title}`,description,'utf8',
       function(err){
         response.writeHead(302, {Location: `/?id=${title}`});
         response.end(); 
       })
     });   
+  }else if(pathname === "/update"){
+    fs.readdir('./data', function(error,filelist){         
+      fs.readFile(`./data/${queryData.id}`,'utf8',function(err,descrpition){
+       var title = queryData.id;
+       var list = templateList(filelist);
+       var template = templateHTML(title,list
+         ,`<form action="/update_process" method="post">
+          <input type = "hidden" name="id" value="${title}">
+         <p><input type ="text" name="title" placeholder ="title" value="${title}"></p>
+         <p>
+           <textarea name="description" placeholder="description">${descrpition}</textarea>
+        </p>
+         <p>
+           <input type="submit">    
+         </p>
+       </form> 
+         `
+         ,`<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
+         );
+     response.writeHead(200);
+     response.end(template); 
+     });  
+   });
+  }else if(pathname === "/update_process"){
+    var body = "";
+    //post방식으로 파편화 된 data가 수신될 때마다 callback함수를 실행한다.(Data event)
+    request.on('data',function(data){
+        body += data;
+        //전송된 data 사이즈가 너무 클 경우 연결을 끊어버리는 안전장치도 만들 수 있다.
+    });
+    //정보의 수신이 끝났을 경우(end event)
+    request.on("end",function(){
+      var post = qs.parse(body);
+      var id = post.id;
+      var title = post.title;
+      var description = post.description;
+      fs.rename(`data/${id}`,`data/${title}`, function(error){
+        fs.writeFile(`data/${title}`,description,'utf8',
+        function(err){
+          response.writeHead(302, {Location: `/?id=${title}`});
+          response.end(); 
+        })       
+      })
+    });  
   }else{
     response.writeHead(404);
     response.end('Not found');    
