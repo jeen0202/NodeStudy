@@ -4,6 +4,8 @@ var url = require('url');
 var template = require('./lib/template.js');
 var file = require('./lib/file.js')
 var path = require('path');
+//sznitize-html을 사용한 출력정보 보안
+var sanitizeHtml = require('sanitize-html');
 //refactoring : 동작방식은 유지하면서 내부의 코드를 효율적으로 바꾸는 행위
 
 var app = http.createServer(function(request,response){
@@ -28,17 +30,23 @@ var app = http.createServer(function(request,response){
         response.end(html); 
         })        
       }else{
-        fs.readdir('./data', function(error,filelist){   
+        fs.readdir('./data', function(error,filelist){ 
+          // 입력에 대한 보안 강화  
           var filterdId = path.parse(queryData.id).base;      
          fs.readFile(`./data/${filterdId}`,'utf8',function(err,descrpition){
           var title = queryData.id;
+          //내용은 없애지않고 html 태그를 제거한다.
+          var sanitizedTitle = sanitizeHtml(title);
+          //함수 호출시 예외 태그를 지정할 수 있다.
+          var sanitizedDescription = sanitizeHtml(descrpition,
+            {allowedTags:['h1']});
           var list = template.list(filelist);
           var html = template.HTML(title,list
-            ,`<h2>${title}</h2>${descrpition}`
+            ,`<h2>${sanitizedTitle}</h2>${sanitizedDescription}`
             ,`<a href="/create">create</a>
-            <a href="/update?id=${title}">update</a>
+            <a href="/update?id=${sanitizedTitle}">update</a>
             <form action = "/delete_process" method = "post">
-              <input type = "hidden" name="id" value ="${title}">
+              <input type = "hidden" name="id" value ="${sanitizedTitle}">
               <input type = "submit" value = "delete">
             </form>`
             //delete 기능을 링크를 통해 구현할 경우 문제가 발생할 수 있다.
