@@ -4,6 +4,14 @@ var url = require('url');
 var template = require('./lib/template.js');
 var file = require('./lib/file.js')
 var path = require('path');
+var mysql = require('mysql');
+var conn = mysql.createConnection({
+  host:'localhost',
+  user:'root',
+  password: '',
+  database : 'tutorials'
+});
+conn.connect();
 //sznitize-html을 사용한 출력정보 보안
 var sanitizeHtml = require('sanitize-html');
 //refactoring : 동작방식은 유지하면서 내부의 코드를 효율적으로 바꾸는 행위
@@ -17,45 +25,70 @@ var app = http.createServer(function(request,response){
     if(pathname === '/'){
       //id값이 없는 최초의 페이지에 대한 부분 추가
       if(queryData.id === undefined){
-        fs.readdir('./data', function(error,filelist){          
-        var title = 'Welcome';
-        var descrpition = "Hello, Node.js";
-
-        var list = template.list(filelist);
-        var html = template.HTML(title,list
+        conn.query (`select * from topic`,function(error,topics){         
+          var title = 'Welcome';
+          var descrpition = "Hello, Node.js";
+          var list = template.list(topics);
+          var html = template.HTML(title,list
           ,`<h2>${title}</h2>${descrpition}`
           ,`<a href="/create">create</a>`
           );
-        response.writeHead(200);
-        response.end(html); 
-        })        
+          response.writeHead(200);
+          response.end(html); 
+          })               
       }else{
-        fs.readdir('./data', function(error,filelist){ 
-          // 입력에 대한 보안 강화  
-          var filterdId = path.parse(queryData.id).base;      
-         fs.readFile(`./data/${filterdId}`,'utf8',function(err,descrpition){
-          var title = queryData.id;
-          //내용은 없애지않고 html 태그를 제거한다.
-          var sanitizedTitle = sanitizeHtml(title);
-          //함수 호출시 예외 태그를 지정할 수 있다.
-          var sanitizedDescription = sanitizeHtml(descrpition,
-            {allowedTags:['h1']});
-          var list = template.list(filelist);
-          var html = template.HTML(title,list
-            ,`<h2>${sanitizedTitle}</h2>${sanitizedDescription}`
-            ,`<a href="/create">create</a>
-            <a href="/update?id=${sanitizedTitle}">update</a>
-            <form action = "/delete_process" method = "post">
-              <input type = "hidden" name="id" value ="${sanitizedTitle}">
-              <input type = "submit" value = "delete">
-            </form>`
-            //delete 기능을 링크를 통해 구현할 경우 문제가 발생할 수 있다.
-            //submit으로 구현된 delete 버튼의 경우 css를 통해 재구성 하자.
-            );
-        response.writeHead(200);
-        response.end(html); 
-        });  
-      });  
+      //   fs.readdir('./data', function(error,filelist){ 
+      //     // 입력에 대한 보안 강화  
+      //     var filterdId = path.parse(queryData.id).base;      
+      //    fs.readFile(`./data/${filterdId}`,'utf8',function(err,descrpition){
+      //     var title = queryData.id;
+      //     //내용은 없애지않고 html 태그를 제거한다.
+      //     var sanitizedTitle = sanitizeHtml(title);
+      //     //함수 호출시 예외 태그를 지정할 수 있다.
+      //     var sanitizedDescription = sanitizeHtml(descrpition,
+      //       {allowedTags:['h1']});
+      //     var list = template.list(filelist);
+      //     var html = template.HTML(title,list
+      //       ,`<h2>${sanitizedTitle}</h2>${sanitizedDescription}`
+      //       ,`<a href="/create">create</a>
+      //       <a href="/update?id=${sanitizedTitle}">update</a>
+      //       <form action = "/delete_process" method = "post">
+      //         <input type = "hidden" name="id" value ="${sanitizedTitle}">
+      //         <input type = "submit" value = "delete">
+      //       </form>`
+      //       //delete 기능을 링크를 통해 구현할 경우 문제가 발생할 수 있다.
+      //       //submit으로 구현된 delete 버튼의 경우 css를 통해 재구성 하자.
+      //       );
+      //   response.writeHead(200);
+      //   response.end(html); 
+      //   });  
+      // });
+          conn.query (`select * from topic`,function(error,topics){
+            if(error){
+              throw error;
+            }
+            conn.query(`select * from topic where id=?`,[queryData.id],function(error2,topic){
+              if(error2){
+                throw error2;
+              }
+              console.log(topic[0].title);
+              var title = topic[0].title;
+              var descrpition = topic[0].description;
+              var list = template.list(topics);
+              var html = template.HTML(title,list
+              ,`<h2>${title}</h2>${descrpition}`
+              ,`<a href="/create">create</a>
+                    <a href="/update?id=${queryData.id}">update</a>
+                    <form action = "/delete_process" method = "post">
+                      <input type = "hidden" name="id" value ="${queryData.id}">
+                      <input type = "submit" value = "delete">
+                    </form>`
+              );
+              
+              response.writeHead(200);
+              response.end(html); 
+            });
+          })                
     }       
   }else if(pathname ==="/create"){
     fs.readdir('./data', function(error,filelist){          
