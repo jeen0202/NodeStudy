@@ -37,32 +37,6 @@ var app = http.createServer(function(request,response){
           response.end(html); 
           })               
       }else{
-      //   fs.readdir('./data', function(error,filelist){ 
-      //     // 입력에 대한 보안 강화  
-      //     var filterdId = path.parse(queryData.id).base;      
-      //    fs.readFile(`./data/${filterdId}`,'utf8',function(err,descrpition){
-      //     var title = queryData.id;
-      //     //내용은 없애지않고 html 태그를 제거한다.
-      //     var sanitizedTitle = sanitizeHtml(title);
-      //     //함수 호출시 예외 태그를 지정할 수 있다.
-      //     var sanitizedDescription = sanitizeHtml(descrpition,
-      //       {allowedTags:['h1']});
-      //     var list = template.list(filelist);
-      //     var html = template.HTML(title,list
-      //       ,`<h2>${sanitizedTitle}</h2>${sanitizedDescription}`
-      //       ,`<a href="/create">create</a>
-      //       <a href="/update?id=${sanitizedTitle}">update</a>
-      //       <form action = "/delete_process" method = "post">
-      //         <input type = "hidden" name="id" value ="${sanitizedTitle}">
-      //         <input type = "submit" value = "delete">
-      //       </form>`
-      //       //delete 기능을 링크를 통해 구현할 경우 문제가 발생할 수 있다.
-      //       //submit으로 구현된 delete 버튼의 경우 css를 통해 재구성 하자.
-      //       );
-      //   response.writeHead(200);
-      //   response.end(html); 
-      //   });  
-      // });
           conn.query (`select * from topic`,function(error,topics){
             if(error){
               throw error;
@@ -83,31 +57,29 @@ var app = http.createServer(function(request,response){
                       <input type = "hidden" name="id" value ="${queryData.id}">
                       <input type = "submit" value = "delete">
                     </form>`
-              );
-              
+              );              
               response.writeHead(200);
               response.end(html); 
             });
           })                
     }       
-  }else if(pathname ==="/create"){
-    fs.readdir('./data', function(error,filelist){          
-      var title = 'WEB - create';    
-    var list = template.list(filelist);
-    var html = template.HTML(title,list,`
-      <form action="/create_process" method="post">
-        <p><input type ="text" name="title" placeholder ="title"></p>
-        <p>
-          <textarea name="description" placeholder="description"></textarea>
-       </p>
-        <p>
-          <input type="submit">    
-        </p>
-      </form>
-    `,'');
-    response.writeHead(200);
-    response.end(html); 
-    });   
+  }else if(pathname ==="/create"){   
+    conn.query (`select * from topic`,function(error,topics){         
+      var title = 'Create';     
+      var list = template.list(topics);
+      var html = template.HTML(title,list
+      ,` <form action="/create_process" method="post">
+      <p><input type ="text" name="title" placeholder ="title"></p>
+      <p>
+        <textarea name="description" placeholder="description"></textarea>
+     </p>
+      <p>
+        <input type="submit">    
+      </p>
+    </form>`,'' );
+      response.writeHead(200);
+      response.end(html); 
+      })   
   }else if (pathname==="/create_process"){
     var body = "";
     //post방식으로 파편화 된 data가 수신될 때마다 callback함수를 실행한다.(Data event)
@@ -118,11 +90,14 @@ var app = http.createServer(function(request,response){
     //정보의 수신이 끝났을 경우(end event)
     request.on("end",function(){
       var post = qs.parse(body);
-      var title = post.title;
-      var description = post.description;
-      fs.writeFile(`data/${title}`,description,'utf8',
-      function(err){
-        response.writeHead(302, {Location: `/?id=${title}`});
+      //submit에서 보낸 정보가 담겨있는 body의 데이터를 sql에 사용      
+      conn.query(`
+      insert into topic (title,description,created,author_id) values(?,?, Now(), ?)`
+      ,[post.title,post.description,1],
+      function(error,result){
+        if(error){
+          throw error;
+        }response.writeHead(302, {Location: `/?id=${result.insertId}`});
         response.end(); 
       })
     });   
