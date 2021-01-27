@@ -1,19 +1,8 @@
 var http = require('http');
-var fs = require('fs');
 var url = require('url');
 var template = require('./lib/template.js');
-var file = require('./lib/file.js')
 var path = require('path');
-var mysql = require('mysql');
-var conn = mysql.createConnection({
-  host:'localhost',
-  user:'root',
-  password: '111111',
-  database : 'tutorials'
-});
-conn.connect();
-//sznitize-html을 사용한 출력정보 보안
-var sanitizeHtml = require('sanitize-html');
+var conn = require('./lib/db');
 //refactoring : 동작방식은 유지하면서 내부의 코드를 효율적으로 바꾸는 행위
 
 var app = http.createServer(function(request,response){
