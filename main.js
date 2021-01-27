@@ -1,10 +1,9 @@
 var http = require('http');
 var url = require('url');
-var template = require('./lib/template.js');
-var path = require('path');
-var conn = require('./lib/db');
-var qs = require('querystring'); 
+//사용자 모듈
 var topic = require('./lib/topic');
+var author = require('./lib/author');
+
 //refactoring : 동작방식은 유지하면서 내부의 코드를 효율적으로 바꾸는 행위
 
 var app = http.createServer(function(request,response){
@@ -29,6 +28,8 @@ var app = http.createServer(function(request,response){
     topic.update_process(request,response);
   }else if(pathname === "/delete_process"){
     topic.delete_process(request,response);
+  }else if(pathname === "/author"){
+    author.home(request,response);
   }else{
     response.writeHead(404);
     response.end('Not found');    
