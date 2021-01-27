@@ -3,56 +3,21 @@ var url = require('url');
 var template = require('./lib/template.js');
 var path = require('path');
 var conn = require('./lib/db');
+var qs = require('querystring'); 
+var topic = require('./lib/topic');
 //refactoring : 동작방식은 유지하면서 내부의 코드를 효율적으로 바꾸는 행위
 
 var app = http.createServer(function(request,response){
     var _url = request.url;
     var queryData = url.parse(_url,true).query;
-    var pathname = url.parse(_url,true).pathname;
-    var qs = require('querystring');        
-    
+    var pathname = url.parse(_url,true).pathname;      
     if(pathname === '/'){
-      //id값이 없는 최초의 페이지에 대한 부분 추가
+      //id값이 없는 최초의 페이지에 대한 부분 모듈화
       if(queryData.id === undefined){
-        conn.query (`select * from topic`,function(error,topics){         
-          var title = 'Welcome';
-          var descrpition = "Hello, Node.js";
-          var list = template.list(topics);
-          var html = template.HTML(title,list
-          ,`<h2>${title}</h2>${descrpition}`
-          ,`<a href="/create">create</a>`
-          );
-          response.writeHead(200);
-          response.end(html); 
-          })               
+        topic.home(request, response);              
       }else{
-          conn.query (`select * from topic`,function(error,topics){
-            if(error){
-              throw error;
-            }
-            //join을 활용하여 author테이블의 name값을 가져올 수 있다.
-            conn.query(`select * from topic left join author on topic.author_id =author.id where topic.id=?`,[queryData.id],function(error2,topic){
-              if(error2){
-                throw error2;
-              }
-              console.log(topic);          
-              var list = template.list(topics);
-              var html = template.HTML(topic[0].title,list
-              ,`
-              <h2>${topic[0].title}</h2>
-              ${topic[0].description}
-              <p>by ${topic[0].name}</p>`
-              ,`<a href="/create">create</a>
-                    <a href="/update?id=${queryData.id}">update</a>
-                    <form action = "/delete_process" method = "post">
-                      <input type = "hidden" name="id" value ="${queryData.id}">
-                      <input type = "submit" value = "delete">
-                    </form>`
-              );              
-              response.writeHead(200);
-              response.end(html); 
-            });
-          })                
+        topic.page(request,response);
+                
     }       
   }else if(pathname ==="/create"){   
     conn.query (`select * from topic`,function(error,topics){   
