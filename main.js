@@ -1,3 +1,24 @@
+const express = require('express')
+//express는 
+const app = express()
+const port = 3000
+
+//route 기능 수행
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+app.get('/page', (req, res) => {
+  res.send('/page')
+})
+//위의 코드와 같은 기능을 수행
+// app.get('/', function(req,res){
+//   return res.send('Hello World!')
+// });
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
+})
+
+/*
 var http = require('http');
 var url = require('url');
 
@@ -49,3 +70,4 @@ var app = http.createServer(function(request,response){
 
 
 app.listen(3000);
+*/
