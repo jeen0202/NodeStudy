@@ -7,12 +7,20 @@ const app = express();
 const port = 3000;
 
 //route 기능 수행
-app.get('/', (request, response) => {
-  topic.home(request, response);
+app.get('/', (req, res) => {
+  topic.home(req, res);
 })
-app.get('/page', (req, res) => {
-  res.send('/page')
+app.get('/page/:pageId', (req, res) => {
+  topic.page(req,res);   
 })
+app.get('/create',(req,res)=> {
+  topic.create(req,res);
+})
+app.post('/create_process',(req,res)=>{
+  topic.create_process(req,res);
+})
+
+
 //위의 코드와 같은 기능을 수행
 // app.get('/', function(req,res){
 //   return res.send('Hello World!')
@@ -26,10 +34,6 @@ var http = require('http');
 var url = require('url');
 
 //사용자 모듈
-
-
-//refactoring : 동작방식은 유지하면서 내부의 코드를 효율적으로 바꾸는 행위
-
 var app = http.createServer(function(request,response){
     var _url = request.url;
     var queryData = url.parse(_url,true).query;
