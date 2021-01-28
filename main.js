@@ -1,11 +1,14 @@
+//express.js 호출
 const express = require('express')
+var topic = require('./lib/topic');
+var author = require('./lib/author');
 //express는 
-const app = express()
-const port = 3000
+const app = express();
+const port = 3000;
 
 //route 기능 수행
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+app.get('/', (request, response) => {
+  topic.home(request, response);
 })
 app.get('/page', (req, res) => {
   res.send('/page')
@@ -23,8 +26,7 @@ var http = require('http');
 var url = require('url');
 
 //사용자 모듈
-var topic = require('./lib/topic');
-var author = require('./lib/author');
+
 
 //refactoring : 동작방식은 유지하면서 내부의 코드를 효율적으로 바꾸는 행위
 
