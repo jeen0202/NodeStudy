@@ -5,7 +5,10 @@ const port = 3000;
 //사용자 모듈 호출
 var topic = require('./lib/topic');
 var author = require('./lib/author');
-
+//미들웨어 호출
+var bodyParser = require('body-parser');
+//미들웨어 실행
+app.use(bodyParser.urlencoded({ extended: false }))
 //route 기능 수행
 //topic 관련페이지 호출
 app.get('/', (req, res) =>{topic.home(req, res);})
