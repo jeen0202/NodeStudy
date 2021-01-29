@@ -5,6 +5,10 @@ const port = 3000;
 //사용자 모듈 호출
 const topic = require('./lib/topic');
 const author = require('./lib/author');
+//Router 호출
+const topicRouter = require('./routes/topic');
+const authorRouter = require('./routes/author');
+const indexRouter = require('./routes/index')
 //미들웨어 호출
 //post방식에서 body를 검출해 주는 body-parser
 var bodyParser = require('body-parser');
@@ -23,20 +27,9 @@ app.get('*',readdb.topic);
 //get 방식에서 첫주소가 author일 경우 미들웨어가 실행된다.
 app.get("/author*",readdb.author);
 //route 기능 수행
-//topic 관련페이지 호출
-app.get('/', (req, res) =>{topic.home(req, res);})
-app.get('/topic/create',(req,res)=> {topic.create(req,res);})
-app.get('/topic/:pageId', (req, res) => {topic.page(req,res);})
-app.post('/topic/create_process',(req,res)=>{topic.create_process(req,res);})
-app.get('/topic/update/:pageId',(req,res) =>{topic.update(req,res);})
-app.post('/topic/update_process',(req,res) =>{topic.update_process(req,res);})
-app.post('/topic/delete_process',(req,res) =>{topic.delete_process(req,res);})
-//author 관련 페이지 호출
-app.get('/author/',(req,res) => {author.home(req,res);})
-app.post('/author/create_process', (req,res) =>{author.create_process(req,res);})
-app.get(`/author/update/:authorId`, (req,res) =>{author.update(req,res);})
-app.post('/author/update_process',(req,res)=>{author.update_process(req,res);})
-app.post("/author/delete_process", (req,res)=>{author.delete_process(req,res);})
+app.use('/topic',topicRouter);
+app.use('/author',authorRouter);
+app.use('/', indexRouter);
 
 app.use(function(req, res, next) {
     res.status(404).send('Sorry cant find that!');
