@@ -13,6 +13,8 @@ var compression = require('compression')
 //사용자 미들웨어 호출
 const readdb = require('./lib/readdb');
 //미들웨어 실행
+//정적 파일 서비스(이미지파일)를 위해 directory 설정
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(compression());
 //사용자 미들웨어 실행
