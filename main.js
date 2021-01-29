@@ -23,7 +23,10 @@ app.use('/topic',topicRouter);
 app.use('/author',authorRouter);
 app.use('/', indexRouter);
 //에러 처리(진행중)
-app.use(function(req, res, next) {res.status(404).send('Sorry cant find that!');});
+
+app.use((req,res,next)=>{
+  next(CreateError(404));
+})
 app.use(function(error, req, res, next) {
   console.error(error.stack);
   res.status(500).send('Something broke!');
