@@ -38,4 +38,12 @@ app.get(`/author/update/:authorId`, (req,res) =>{author.update(req,res);})
 app.post('/author/update_process',(req,res)=>{author.update_process(req,res);})
 app.post("/author/delete_process", (req,res)=>{author.delete_process(req,res);})
 
+app.use(function(req, res, next) {
+    res.status(404).send('Sorry cant find that!');
+  });
+
+app.use(function(error, req, res, next) {
+  console.error(error.stack);
+  res.status(500).send('Something broke!');
+});  
 app.listen(port, () => {console.log(`listening at port ${port}`) })
