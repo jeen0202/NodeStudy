@@ -3,8 +3,9 @@ const express = require('express')
 const app = express();
 const port = 3000;
 //사용자 모듈 호출
-var topic = require('./lib/topic');
-var author = require('./lib/author');
+const topic = require('./lib/topic');
+const author = require('./lib/author');
+const db = require('./lib/db');
 //미들웨어 호출
 //post방식에서 body를 검출해 주는 body-parser
 var bodyParser = require('body-parser');
@@ -13,6 +14,17 @@ var compression = require('compression')
 //미들웨어 실행
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(compression());
+//사용자 미들웨어 실행
+//user가 아닌 get을 사용할 경우 get방식으로 모듈을 호출할때만 미들웨어가 실행된다.
+app.get('*',(req,res,next)=>{
+    db.query (`select * from topic`,function(error,topics){
+        if(error){
+            throw error;
+        }
+        req.topics = topics;
+        next();
+    })
+})
 //route 기능 수행
 //topic 관련페이지 호출
 app.get('/', (req, res) =>{topic.home(req, res);})
