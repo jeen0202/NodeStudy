@@ -24,11 +24,4 @@ app.use('/author',authorRouter);
 app.use('/', indexRouter);
 //에러 처리(진행중)
 
-app.use((req,res,next)=>{
-  next(CreateError(404));
-})
-app.use(function(error, req, res, next) {
-  console.error(error.stack);
-  res.status(500).send('Something broke!');
-});  
 app.listen(port, () => {console.log(`listening at port ${port}`) })
