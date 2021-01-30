@@ -16,6 +16,7 @@ app.use(express.static('public')); //정적 파일 서비스
 app.use(bodyParser.urlencoded({ extended: false })) //post 방식에서 body parsing
 app.use(compression()); // 파일 압축
 //사용자 미들웨어 실행
+
 app.get('*',readdb.topic);
 app.get("/author*",readdb.author);
 //router 실행
