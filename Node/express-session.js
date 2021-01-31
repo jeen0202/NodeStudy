@@ -1,35 +1,26 @@
 var express = require('express')
 var parseurl = require('parseurl')
 var session = require('express-session')
-
+//session의 정보를 파일에 저장하기 위한 모듈 호출
+var FileStore = require('session-file-store')(session);
 var app = express()
 
+//session 미들웨어 사용시 req에 session 객체가 추가된다.
 app.use(session({
-  secret: 'keyboard cat',
+  secret: 'holly molly',
   resave: false,
-  saveUninitialized: true
-}))
+  saveUninitialized: true,
+  store : new FileStore()
+}))  
 
-app.use(function (req, res, next) {
-  if (!req.session.views) {
-    req.session.views = {}
-  }
-
-  // get the url pathname
-  var pathname = parseurl(req).pathname
-
-  // count the views
-  req.session.views[pathname] = (req.session.views[pathname] || 0) + 1
-
-  next()
-})
-
-app.get('/foo', function (req, res, next) {
-  res.send('you viewed this page ' + req.session.views['/foo'] + ' times')
-})
-
-app.get('/bar', function (req, res, next) {
-  res.send('you viewed this page ' + req.session.views['/bar'] + ' times')
+app.get('/', function (req, res, next) {
+    //console.log(req.session);
+    if(req.session.num === undefined){
+        req.session.num =1; 
+    }else{
+        req.session.num++;
+    }
+  res.send(`Views : ${req.session.num}`)
 })
 
 app.listen(3000, ()=>{
