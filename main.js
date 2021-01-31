@@ -5,7 +5,11 @@ const port = 3000;
 //Router 호출
 const topicRouter = require('./routes/topic');
 const authorRouter = require('./routes/author');
-const indexRouter = require('./routes/index')
+const indexRouter = require('./routes/index');
+const authRouter = require('./routes/auth');
+//Session 호출
+var session = require('express-session');
+var FileStore = require('session-file-store')(session);
 //미들웨어 호출
 var bodyParser = require('body-parser');//post방식에서 body를 검출해 주는 body-parser
 var compression = require('compression')//압축을 통해 서버에서 전송하는 data의 size를 줄여주는 compression
@@ -15,13 +19,21 @@ const readdb = require('./lib/readdb');
 app.use(express.static('public')); //정적 파일 서비스
 app.use(bodyParser.urlencoded({ extended: false })) //post 방식에서 body parsing
 app.use(compression()); // 파일 압축
+app.use(session({ // session
+    // secure: true 옵션으로 https에서만 작동되게 할 수 있다.
+    // httpOnley: true 옵션으로 javascript로 세션에 접근하는것 을 차단 할 수 있다.
+    secret: 'holly molly',
+    resave: false,
+    saveUninitialized: true,
+    store : new FileStore()
+  })); 
 //사용자 미들웨어 실행
-
 app.get('*',readdb.topic);
 app.get("/author*",readdb.author);
 //router 실행
 app.use('/topic',topicRouter);
 app.use('/author',authorRouter);
+app.use('/auth',authRouter);
 app.use('/', indexRouter);
 //에러 처리(진행중)
 
