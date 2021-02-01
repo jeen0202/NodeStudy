@@ -1,0 +1,39 @@
+{
+  "topic": [
+    {
+      "id": 1,
+      "title": "MySQL & MariaDB",
+      "description": "mysql is ...",
+      "author": 1
+    },
+    {
+      "id": "jLnRdcZtoZkmrc_gDThfA",
+      "title": "PostgreSQL",
+      "description": "PostgerSQL is ...",
+      "author": "ZSFRZY5ZOa-oc46E10XlB"
+    },
+    {
+      "id": "aKaBRINQNIGLf39aKMKjI",
+      "title": "MSSQL",
+      "description": "MSSQL is ...",
+      "author": "EH-cUbfRnK8y-OE7LBVji"
+    }
+  ],
+  "author": [
+    {
+      "id": 1,
+      "name": "egoing",
+      "profile": "developer"
+    },
+    {
+      "id": "ZSFRZY5ZOa-oc46E10XlB",
+      "namd": "taeho",
+      "profile": "data scientist"
+    },
+    {
+      "id": "EH-cUbfRnK8y-OE7LBVji",
+      "namd": "duru",
+      "profile": "db admin"
+    }
+  ]
+}
