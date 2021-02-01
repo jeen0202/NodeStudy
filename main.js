@@ -13,8 +13,17 @@ var FileStore = require('session-file-store')(session);
 //미들웨어 호출
 var bodyParser = require('body-parser');//post방식에서 body를 검출해 주는 body-parser
 var compression = require('compression')//압축을 통해 서버에서 전송하는 data의 size를 줄여주는 compression
+var flash = require('connect-flash');// Flash message 전송
+var passport = require('passport')//인증기능을 위한 passport
+  , LocalStrategy = require('passport-local').Strategy;
 //사용자 미들웨어 호출
 const readdb = require('./lib/readdb');
+// 기본 인증정보
+let authData ={
+  email: 'jeen0202@korea.ac.kr',
+  password:'111111',
+  nickname:'jeen0202'
+  }
 //미들웨어 실행
 app.use(express.static('public')); //정적 파일 서비스
 app.use(bodyParser.urlencoded({ extended: false })) //post 방식에서 body parsing
@@ -26,18 +35,9 @@ app.use(session({ // session
     resave: false,
     saveUninitialized: false,
     store : new FileStore()
-  })); 
-
-let authData ={
-  email: 'jeen0202@korea.ac.kr',
-  password:'111111',
-  nickname:'jeen0202'
-  }
-//인증기능을 위한 passport 호출
-var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
-  //passport 초기화
-  app.use(passport.initialize());
+  }));   
+  app.use(flash()); //flash 호출
+  app.use(passport.initialize()); //passport 초기화
   app.use(passport.session());
   //session사용을 위한 serialize(로그인 성공시 session-store에 저장)
   passport.serializeUser(function(user, done) {
@@ -60,7 +60,9 @@ var passport = require('passport')
         console.log(1);
         if(password === authData.password){
           console.log(2);
-          return done(null, authData);//2번째 파라미터에 사용자의 실제 정보를 담는다.
+          return done(null, authData,{
+            message: "Login success."
+          });//2번째 파라미터에 사용자의 실제 정보를 담는다.
           }else{
             console.log(3);
             return done(null, false, { message: 'Incorrect password.' });
@@ -76,12 +78,15 @@ var passport = require('passport')
 //File-Store를 사용했기때문에 바로 redirect하지 않고 save를 통해 저장후 redirect하자  
 app.post('/auth/login_process'
 ,passport.authenticate('local',{
-  failureRedirect : '/auth/login'}) , (req, res) => 
+  failureRedirect : '/auth/login'
+  ,successFlash: true
+  ,failureFlash: true}) , (req, res) => 
   {
   req.session.save( () => {
   res.redirect('/')
   })
-  })
+  }
+  )
 
 //사용자 미들웨어 실행
 app.get('*',readdb.topic);
