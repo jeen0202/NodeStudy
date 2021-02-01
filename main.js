@@ -24,9 +24,66 @@ app.use(session({ // session
     // httpOnley: true 옵션으로 javascript로 세션에 접근하는것 을 차단 할 수 있다.
     secret: 'holly molly',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store : new FileStore()
   })); 
+
+let authData ={
+  email: 'jeen0202@korea.ac.kr',
+  password:'111111',
+  nickname:'jeen0202'
+  }
+//인증기능을 위한 passport 호출
+var passport = require('passport')
+  , LocalStrategy = require('passport-local').Strategy;
+  //passport 초기화
+  app.use(passport.initialize());
+  app.use(passport.session());
+  //session사용을 위한 serialize(로그인 성공시 session-store에 저장)
+  passport.serializeUser(function(user, done) {
+    console.log('serializeUser', user);
+    //done 함수의 매개변수에 식별자
+    done(null, user.email); 
+  });
+  //page를 호출할때마다 같이 호출되는 callback 함수(페이지 방문시 마다 인증된 사용자인지 확인)
+  passport.deserializeUser(function(id, done) {
+    console.log('deserializeUser', id);
+    done(null,authData)//원래는 사용자 정보를 조회해야한다.
+  });
+  passport.use(new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password'
+  },
+    function(username, password, done) {
+      //입력된 인증정보의 가부여부를 정해주는 block
+      console.log('LocalStrategy',username,password);
+      if(username === authData.email){
+        console.log(1);
+        if(password === authData.password){
+          console.log(2);
+          return done(null, authData);//2번째 파라미터에 사용자의 실제 정보를 담는다.
+          }else{
+            console.log(3);
+            return done(null, false, { message: 'Incorrect password.' });
+          }        
+      }else{
+        console.log(4);
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+    }
+  ));
+
+//인증기능 구현을 위한 구현
+//File-Store를 사용했기때문에 바로 redirect하지 않고 save를 통해 저장후 redirect하자  
+app.post('/auth/login_process'
+,passport.authenticate('local',{
+  failureRedirect : '/auth/login'}) , (req, res) => 
+  {
+  req.session.save( () => {
+  res.redirect('/')
+  })
+  })
+
 //사용자 미들웨어 실행
 app.get('*',readdb.topic);
 app.get("/author*",readdb.author);
