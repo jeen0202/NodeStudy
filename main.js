@@ -41,21 +41,20 @@ var passport = require('passport')
   app.use(passport.session());
   //session사용을 위한 serialize(로그인 성공시 session-store에 저장)
   passport.serializeUser(function(user, done) {
-    console.log('serializeUser', user);
-    //done 함수의 매개변수에 식별자
-    done(null, user.email); 
+    console.log('serializeUser', user);    
+    done(null, user.email); //done 함수의 매개변수에 식별자
   });
   //page를 호출할때마다 같이 호출되는 callback 함수(페이지 방문시 마다 인증된 사용자인지 확인)
   passport.deserializeUser(function(id, done) {
     console.log('deserializeUser', id);
     done(null,authData)//원래는 사용자 정보를 조회해야한다.
   });
+  //인증 성공 유무를 확인
   passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
   },
-    function(username, password, done) {
-      //입력된 인증정보의 가부여부를 정해주는 block
+    function(username, password, done) {     
       console.log('LocalStrategy',username,password);
       if(username === authData.email){
         console.log(1);
