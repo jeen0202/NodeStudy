@@ -14,8 +14,9 @@ module.exports = function(passport){
       req.session.save( () => {
       res.redirect('/')
       })
-      }
-      )
+    })
+    router.get('/register',(req,res)=>{auth.register(req,res);})
+    router.post('/register_process',(req,res)=>{auth.register_process(req,res);})
     router.get('/logout_process',(req,res)=>{auth.logout_process(req,res);})
     return router;
 }
