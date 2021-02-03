@@ -5,6 +5,12 @@
       "email": "jeen0202@korea.ac.kr",
       "password": "111111",
       "displayName": "jeen0202"
+    },
+    {
+      "id": "f3GK4Uzh2zujSiluzjoDD",
+      "email": "jeen02",
+      "password": "1111",
+      "displayName": "jeen02"
     }
   ],
   "topics": [
@@ -15,10 +21,10 @@
       "user_id": "GCGrnNxyb54UJQxjMH21M"
     },
     {
-      "id": "PQo1AlkXsgSxs1YjiKyLB",
-      "title": "Muti user",
-      "descrpition": ".....",
-      "user_id": "GCGrnNxyb54UJQxjMH21M"
+      "id": "0VI7cmTtcFCMuzSlbQPgV",
+      "title": "OAuth",
+      "descrpition": "....",
+      "user_id": "f3GK4Uzh2zujSiluzjoDD"
     }
   ]
 }

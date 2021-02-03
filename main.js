@@ -15,7 +15,8 @@ var bodyParser = require('body-parser');//post방식에서 body를 검출해 주
 var compression = require('compression')//압축을 통해 서버에서 전송하는 data의 size를 줄여주는 compression
 var flash = require('connect-flash');// Flash message 전송
 //사용자 미들웨어 호출
-const readdb = require('./lib/readdb');
+//const readdb = require('./lib/readdb');
+const readlow = require('./lib/readlow');
 // 기본 인증정보
 
 //미들웨어 실행
@@ -36,8 +37,11 @@ app.use(session({ // session
 //인증기능 구현을 위한 구현
 
 //사용자 미들웨어 실행
+/*MySql을 사용할 시의 DB 호출 미들웨어
 app.get('*',readdb.topic);
 app.get("/author*",readdb.author);
+*/
+app.get('*',readlow.topic);
 //router 실행
 app.use('/topic',topicRouter);
 app.use('/author',authorRouter);
