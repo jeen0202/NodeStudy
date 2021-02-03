@@ -17,13 +17,13 @@
     {
       "id": "9qLptknnPaDuUkK493jJ8",
       "title": "Express.js",
-      "descrpition": "Express.js is ....",
+      "description": "Express.js is ....",
       "user_id": "GCGrnNxyb54UJQxjMH21M"
     },
     {
       "id": "0VI7cmTtcFCMuzSlbQPgV",
-      "title": "OAuth",
-      "descrpition": "....",
+      "title": "OAuth 2.0",
+      "description": "OAuth 2.0 is ...",
       "user_id": "f3GK4Uzh2zujSiluzjoDD"
     }
   ]
