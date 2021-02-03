@@ -1,39 +1,24 @@
 {
-  "topic": [
+  "users": [
     {
-      "id": 1,
-      "title": "MySQL & MariaDB",
-      "description": "mysql is ...",
-      "author": 1
-    },
-    {
-      "id": "jLnRdcZtoZkmrc_gDThfA",
-      "title": "PostgreSQL",
-      "description": "PostgerSQL is ...",
-      "author": "ZSFRZY5ZOa-oc46E10XlB"
-    },
-    {
-      "id": "aKaBRINQNIGLf39aKMKjI",
-      "title": "MSSQL",
-      "description": "MSSQL is ...",
-      "author": "EH-cUbfRnK8y-OE7LBVji"
+      "id": "GCGrnNxyb54UJQxjMH21M",
+      "email": "jeen0202@korea.ac.kr",
+      "password": "111111",
+      "displayName": "jeen0202"
     }
   ],
-  "author": [
+  "topics": [
     {
-      "id": 1,
-      "name": "egoing",
-      "profile": "developer"
+      "id": "9qLptknnPaDuUkK493jJ8",
+      "title": "Express.js",
+      "descrpition": "Express.js is ....",
+      "user_id": "GCGrnNxyb54UJQxjMH21M"
     },
     {
-      "id": "ZSFRZY5ZOa-oc46E10XlB",
-      "namd": "taeho",
-      "profile": "data scientist"
-    },
-    {
-      "id": "EH-cUbfRnK8y-OE7LBVji",
-      "namd": "duru",
-      "profile": "db admin"
+      "id": "PQo1AlkXsgSxs1YjiKyLB",
+      "title": "Muti user",
+      "descrpition": ".....",
+      "user_id": "GCGrnNxyb54UJQxjMH21M"
     }
   ]
 }
