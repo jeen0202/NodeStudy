@@ -42,6 +42,8 @@ app.get('*',readdb.topic);
 app.get("/author*",readdb.author);
 */
 app.get('*',readlow.topic);
+//구글 로그인을 위한 주소
+
 //router 실행
 app.use('/topic',topicRouter);
 app.use('/author',authorRouter);
