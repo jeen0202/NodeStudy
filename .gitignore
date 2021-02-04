@@ -2,3 +2,4 @@ lib/db.js
 node_modules/
 sessions/
 db.json
+config/google.json
