@@ -1,23 +1,11 @@
 {
   "users": [
     {
-      "id": "GCGrnNxyb54UJQxjMH21M",
-      "email": "jeen0202@korea.ac.kr",
-      "password": "111111",
+      "id": "iE1CH9BvGMSqjPdf4MnJO",
+      "email": "jeen0202@gmail.com",
       "displayName": "jeen0202",
-      "googleId": "111634529021310805346"
-    },
-    {
-      "id": "f3GK4Uzh2zujSiluzjoDD",
-      "email": "jeen02",
-      "password": "1111",
-      "displayName": "jeen02"
-    },
-    {
-      "id": "5vFLSZTTHp9eFhWsgR1fV",
-      "email": "sejin0202",
-      "password": "$2b$10$yVuKHmHg1FJ/dxo4bZ9Zvu/nBAL7DPd22efHeaH7DnEGsX2VqA8aG",
-      "displayName": "sejin0202"
+      "googleId": "104000667689300660570",
+      "password": "$2b$10$iEySU0ZunsE/l6UR90qCZO2f.A5tS9V2mXPsTtvelUCFeWUoIU1gi"
     }
   ],
   "topics": [
