@@ -3,7 +3,8 @@ const router = express.Router();
 const auth = require('../lib/auth')
 module.exports = function(passport){
   router.get('/google',
-  passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login']
+  passport.authenticate('google', { 
+    scope: ['https://www.googleapis.com/auth/plus.login','email']
   }));
   router.get('/google/callback', 
   passport.authenticate('google', { failureRedirect: '/auth/login' }),
