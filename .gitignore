@@ -3,3 +3,4 @@ node_modules/
 sessions/
 db.json
 config/google.json
+config/facebook.json
