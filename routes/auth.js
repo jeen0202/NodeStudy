@@ -18,6 +18,19 @@ module.exports = function(passport){
   passport.authenticate('facebook', 
   { successRedirect: '/',
   failureRedirect: '/auth/login' }));
+  router.get('/kakao',passport.authenticate('kakao', {
+      failureRedirect: '/auth/login',
+    }),(req,res)=>{
+      res.redirect('/');
+    }    
+  )
+  router.get('/kakao/callback',passport.authenticate('kakao', {
+      failureRedirect: '/auth/login',
+    }),(req,res)=>{
+      res.redirect('/');
+    }    
+  )
+
   router.get('/login',(req,res)=>{auth.login(req,res);})
   //router.post('/login_process',(req,res)=>{auth.login_process(req,res);})
   //File-Store를 사용했기때문에 바로 redirect하지 않고 save를 통해 저장후 redirect하자  
